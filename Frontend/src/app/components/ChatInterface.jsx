@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import UserMessage from './UserMessage';
+import axios from 'axios';
 import ArenaResponse from './ArenaResponse';
 
 const MOCK_RESPONSE = {
@@ -26,15 +27,23 @@ export default function ChatInterface() {
     scrollToBottom();
   }, [messages]);
 
-  const handleSend = (e) => {
+  const handleSend = async (e) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
+
+    const response = await axios.post("http://localhost:3000/invoke",{
+      input: inputValue
+    })
+
+    const data = response.data
+
+    console.log(data)
 
     const newMessage = {
       id: Date.now(),
       problem: inputValue,
       // simulate the delay or instantly add dummy response
-      ...MOCK_RESPONSE
+      ...data.result
     };
 
     setMessages([...messages, newMessage]);
